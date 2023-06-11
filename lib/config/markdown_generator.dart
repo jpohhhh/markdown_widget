@@ -26,11 +26,8 @@ class MarkdownGenerator {
     this.textGenerator,
   }) : this.config = config ?? MarkdownConfig.defaultConfig;
 
-  ///convert [data] to widgets
-  ///[onTocList] can provider [Toc] list
-  List<Widget> buildWidgets(String data,
-      {ValueCallback<List<Toc>>? onTocList}) {
-    final m.Document document = m.Document(
+  m.Document createDocument() {
+    return m.Document(
       extensionSet: m.ExtensionSet(
         List<m.BlockSyntax>.unmodifiable(
           <m.BlockSyntax>[
@@ -47,8 +44,10 @@ class MarkdownGenerator {
       inlineSyntaxes: inlineSyntaxes,
       blockSyntaxes: blockSyntaxes,
     );
-    final List<String> lines = data.split(RegExp(r'(\r?\n)|(\r?\t)|(\r)'));
-    final List<m.Node> nodes = document.parseLines(lines);
+  }
+
+  List<Widget> buildWidgetsFromNodes(List<m.Node> nodes,
+      {ValueCallback<List<Toc>>? onTocList}) {
     final List<Toc> tocList = [];
     final visitor = WidgetVisitor(
         config: config,
@@ -77,6 +76,16 @@ class MarkdownGenerator {
       widgets.add(Text.rich(inlineSpan));
     });
     return widgets;
+  }
+
+  ///convert [data] to widgets
+  ///[onTocList] can provider [Toc] list
+  List<Widget> buildWidgets(String data,
+      {ValueCallback<List<Toc>>? onTocList}) {
+    final m.Document document = createDocument();
+    final List<String> lines = data.split(RegExp(r'(\r?\n)|(\r?\t)|(\r)'));
+    final List<m.Node> nodes = document.parseLines(lines);
+    return buildWidgetsFromNodes(nodes, onTocList: onTocList);
   }
 }
 
