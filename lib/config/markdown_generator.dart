@@ -31,7 +31,18 @@ class MarkdownGenerator {
   List<Widget> buildWidgets(String data,
       {ValueCallback<List<Toc>>? onTocList}) {
     final m.Document document = m.Document(
-      extensionSet: m.ExtensionSet.gitHubFlavored,
+      extensionSet: m.ExtensionSet(
+        List<m.BlockSyntax>.unmodifiable(
+          <m.BlockSyntax>[
+            const m.FencedCodeBlockSyntax(),
+            m.FootnoteDefSyntax(),
+            m.TableSyntax()
+          ],
+        ),
+        List<m.InlineSyntax>.unmodifiable(
+          <m.InlineSyntax>[m.InlineHtmlSyntax()],
+        ),
+      ),
       encodeHtml: false,
       inlineSyntaxes: inlineSyntaxes,
       blockSyntaxes: blockSyntaxes,
@@ -51,21 +62,19 @@ class MarkdownGenerator {
                 Toc(node: node, widgetIndex: index, selfIndex: listLength));
           }
         });
+
     final spans = visitor.visit(nodes);
     onTocList?.call(tocList);
     final List<Widget> widgets = [];
     spans.forEach((span) {
       InlineSpan inlineSpan = span.build();
-      if(inlineSpan is TextSpan){
+      if (inlineSpan is TextSpan) {
         ///fix: line breaks are not effective when copying.
         ///see [https://github.com/asjqkkkk/markdown_widget/issues/105]
         ///see [https://github.com/asjqkkkk/markdown_widget/issues/95]
         inlineSpan.children?.add(TextSpan(text: '\r'));
       }
-      widgets.add(Padding(
-        padding: linesMargin,
-        child: Text.rich(inlineSpan),
-      ));
+      widgets.add(Text.rich(inlineSpan));
     });
     return widgets;
   }
