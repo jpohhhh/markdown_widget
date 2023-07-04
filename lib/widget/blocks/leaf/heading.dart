@@ -120,7 +120,7 @@ class H1Config with HeadingConfig {
       ));
 
   @override
-  HeadingDivider? get divider => HeadingDivider.h1;
+  HeadingDivider? get divider => null;
 }
 
 ///config class for h2
@@ -147,7 +147,7 @@ class H2Config with HeadingConfig {
       ));
 
   @override
-  HeadingDivider? get divider => HeadingDivider.h2;
+  HeadingDivider? get divider => null;
 }
 
 ///config class for h3
@@ -174,7 +174,7 @@ class H3Config with HeadingConfig {
       ));
 
   @override
-  HeadingDivider? get divider => HeadingDivider.h3;
+  HeadingDivider? get divider => null;
 }
 
 ///config class for h4
